@@ -56,14 +56,14 @@ fi
 # Build image
 if [ -z "$param_database" ]; then
     if [ "$param_slim" = true ]; then
-        docker buildx build --build-arg VERSION=${arg_version} --build-arg DB=${param_database} --tag sklimaszewski/${arg_image}:${arg_version}-slim --squash --platform "linux/arm64,linux/amd65" --push ${arg_image}/slim
+        docker buildx build --build-arg VERSION=${arg_version} --build-arg DB=${param_database} --tag sklimaszewski/${arg_image}:${arg_version}-slim --squash --platform "linux/arm64,linux/amd64" --push ${arg_image}/slim
     else
-        docker buildx build --build-arg VERSION=${arg_version} --build-arg DB=${param_database} --tag sklimaszewski/${arg_image}:${arg_version} --squash --platform "linux/arm64,linux/amd65" --push ${arg_image}
+        docker buildx build --build-arg VERSION=${arg_version} --build-arg DB=${param_database} --tag sklimaszewski/${arg_image}:${arg_version} --squash --platform "linux/arm64,linux/amd64" --push ${arg_image}
     fi
 else
     if [ "$param_slim" = true ]; then
-        docker buildx build --build-arg VERSION=${arg_version} --build-arg DB=${param_database} --tag sklimaszewski/${arg_image}:${arg_version}-${param_database}-slim --squash --platform "linux/arm64,linux/amd65" --push ${arg_image}/slim
+        docker buildx build --build-arg VERSION=${arg_version} --build-arg DB=${param_database} --tag sklimaszewski/${arg_image}:${arg_version}-${param_database}-slim --squash --platform "linux/arm64,linux/amd64" --push ${arg_image}/slim
     else
-        docker buildx build --build-arg VERSION=${arg_version} --build-arg DB=${param_database} --tag sklimaszewski/${arg_image}:${arg_version}-${param_database} --squash --platform "linux/arm64,linux/amd65" --push ${arg_image}
+        docker buildx build --build-arg VERSION=${arg_version} --build-arg DB=${param_database} --tag sklimaszewski/${arg_image}:${arg_version}-${param_database} --squash --platform "linux/arm64,linux/amd64" --push ${arg_image}
     fi
 fi
