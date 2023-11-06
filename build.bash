@@ -2,14 +2,14 @@
 
 # Initialize variables with default values
 param_slim=false
-param_database=
+param_variant=
 
 # Function to display usage information
 usage() {
     echo "Usage: $0 [OPTIONS] IMAGE VERSION"
     echo "OPTIONS:"
     echo "  -s, --slim              Creates smaller variant of an image"
-    echo "  -d, --database (name)   Set database engine for PHP image"
+    echo "  -v, --variant (name)    Pass custom variant of an image"
     echo "  -h, --help              Display this help message"
     exit 0
 }
@@ -23,7 +23,7 @@ while [[ $# -gt 0 ]]; do
             ;;
         -d|--database)
             if [ -n "$2" ]; then
-                param_database="$2"
+                param_variant="$2"
                 shift 2
             else
                 echo "Error: Missing value for database parameter."
@@ -54,16 +54,16 @@ if [ -z "$arg_image" ] || [ -z "$arg_version" ]; then
 fi
 
 # Build image
-if [ -z "$param_database" ]; then
+if [ -z "$param_variant" ]; then
     if [ "$param_slim" = true ]; then
-        docker buildx build --build-arg VERSION=${arg_version} --build-arg DB=${param_database} --tag sklimaszewski/${arg_image}:${arg_version}-slim --squash --platform "linux/arm64,linux/amd64" --push ${arg_image}/slim
+        docker buildx build --build-arg VERSION=${arg_version} --build-arg --tag sklimaszewski/${arg_image}:${arg_version}-slim --squash --platform "linux/arm64,linux/amd64" --push ${arg_image}/slim
     else
-        docker buildx build --build-arg VERSION=${arg_version} --build-arg DB=${param_database} --tag sklimaszewski/${arg_image}:${arg_version} --squash --platform "linux/arm64,linux/amd64" --push ${arg_image}
+        docker buildx build --build-arg VERSION=${arg_version} --build-arg --tag sklimaszewski/${arg_image}:${arg_version} --squash --platform "linux/arm64,linux/amd64" --push ${arg_image}
     fi
 else
     if [ "$param_slim" = true ]; then
-        docker buildx build --build-arg VERSION=${arg_version} --build-arg DB=${param_database} --tag sklimaszewski/${arg_image}:${arg_version}-${param_database}-slim --squash --platform "linux/arm64,linux/amd64" --push ${arg_image}/slim
+        docker buildx build --build-arg VERSION=${arg_version} --build-arg --tag sklimaszewski/${arg_image}:${arg_version}-${param_variant}-slim --squash --platform "linux/arm64,linux/amd64" --push ${arg_image}/${param_variant}/slim
     else
-        docker buildx build --build-arg VERSION=${arg_version} --build-arg DB=${param_database} --tag sklimaszewski/${arg_image}:${arg_version}-${param_database} --squash --platform "linux/arm64,linux/amd64" --push ${arg_image}
+        docker buildx build --build-arg VERSION=${arg_version} --build-arg --tag sklimaszewski/${arg_image}:${arg_version}-${param_variant} --squash --platform "linux/arm64,linux/amd64" --push ${arg_image}/${param_variant}
     fi
 fi
