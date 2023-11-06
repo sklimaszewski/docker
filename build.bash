@@ -56,14 +56,14 @@ fi
 # Build image
 if [ -z "$param_variant" ]; then
     if [ "$param_slim" = true ]; then
-        docker buildx build --build-arg VERSION=${arg_version} --build-arg --tag sklimaszewski/${arg_image}:${arg_version}-slim --squash --platform "linux/arm64,linux/amd64" --push ${arg_image}/slim
+        docker buildx build --build-arg VERSION=${arg_version} --tag sklimaszewski/${arg_image}:${arg_version}-slim --squash --platform "linux/arm64,linux/amd64" --push ${arg_image}/slim
     else
-        docker buildx build --build-arg VERSION=${arg_version} --build-arg --tag sklimaszewski/${arg_image}:${arg_version} --squash --platform "linux/arm64,linux/amd64" --push ${arg_image}
+        docker buildx build --build-arg VERSION=${arg_version} --tag sklimaszewski/${arg_image}:${arg_version} --squash --platform "linux/arm64,linux/amd64" --push ${arg_image}
     fi
 else
     if [ "$param_slim" = true ]; then
-        docker buildx build --build-arg VERSION=${arg_version} --build-arg --tag sklimaszewski/${arg_image}:${arg_version}-${param_variant}-slim --squash --platform "linux/arm64,linux/amd64" --push ${arg_image}/${param_variant}/slim
+        docker buildx build --build-arg VERSION=${arg_version} --tag sklimaszewski/${arg_image}:${arg_version}-${param_variant}-slim --squash --platform "linux/arm64,linux/amd64" --push ${arg_image}/${param_variant}/slim
     else
-        docker buildx build --build-arg VERSION=${arg_version} --build-arg --tag sklimaszewski/${arg_image}:${arg_version}-${param_variant} --squash --platform "linux/arm64,linux/amd64" --push ${arg_image}/${param_variant}
+        docker buildx build --build-arg VERSION=${arg_version} --tag sklimaszewski/${arg_image}:${arg_version}-${param_variant} --squash --platform "linux/arm64,linux/amd64" --push ${arg_image}/${param_variant}
     fi
 fi
