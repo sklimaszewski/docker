@@ -21,12 +21,12 @@ while [[ $# -gt 0 ]]; do
             param_slim=true
             shift
             ;;
-        -d|--database)
+        -v|--variant)
             if [ -n "$2" ]; then
                 param_variant="$2"
                 shift 2
             else
-                echo "Error: Missing value for database parameter."
+                echo "Error: Missing value for variant parameter."
                 exit 1
             fi
             ;;
