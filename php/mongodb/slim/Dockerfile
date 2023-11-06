@@ -18,6 +18,7 @@ RUN apk update && \
 
 # MongoDB dependencies
 RUN apk add --no-cache mongodb-tools && \
+    echo "no" | pecl install mongodb-1.16.2 && \
     docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp && \
     docker-php-ext-enable opcache redis mongodb && \
     docker-php-ext-install exif gd pcntl intl xsl zip
