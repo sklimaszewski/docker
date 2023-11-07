@@ -3,11 +3,15 @@
 # Initialize variables with default values
 param_slim=false
 param_variant=
+param_merge=false
+param_multiarch=false
 
 # Function to display usage information
 usage() {
     echo "Usage: $0 [OPTIONS] IMAGE VERSION"
     echo "OPTIONS:"
+    echo "  -a, --multi-arch        Multi-architecture build"
+    echo "  -m, --merge             Merge multiple manifest into single image"
     echo "  -s, --slim              Creates smaller variant of an image"
     echo "  -v, --variant (name)    Pass custom variant of an image"
     echo "  -h, --help              Display this help message"
@@ -17,6 +21,14 @@ usage() {
 # Process command line arguments
 while [[ $# -gt 0 ]]; do
     case "$1" in
+        -a|--multi-arch)
+            param_multiarch=true
+            shift
+            ;;
+        -m|--merge)
+            param_merge=true
+            shift
+            ;;
         -s|--slim)
             param_slim=true
             shift
@@ -54,16 +66,42 @@ if [ -z "$arg_image" ] || [ -z "$arg_version" ]; then
 fi
 
 # Build image
-if [ -z "$param_variant" ]; then
-    if [ "$param_slim" = true ]; then
-        docker buildx build --build-arg VERSION=${arg_version} --tag sklimaszewski/${arg_image}:${arg_version}-slim --squash --platform "linux/arm64,linux/amd64" --push ${arg_image}/slim
-    else
-        docker buildx build --build-arg VERSION=${arg_version} --tag sklimaszewski/${arg_image}:${arg_version} --squash --platform "linux/arm64,linux/amd64" --push ${arg_image}
-    fi
+tag="sklimaszewski/${arg_image}:${arg_version}"
+platform="linux/arm64,linux/amd64"
+build_path=${arg_image}
+
+if [ -n "$param_variant" ]; then
+    tag="${tag}-${param_variant}"
+    build_path="${build_path}/${param_variant}"
+fi
+
+if [ "$param_slim" = true ]; then
+    tag="${tag}-slim"
+    build_path="${build_path}/slim"
+fi
+
+if [ "$param_multiarch" = true ]; then
+    architecture="linux/arm64,linux/amd64"
 else
-    if [ "$param_slim" = true ]; then
-        docker buildx build --build-arg VERSION=${arg_version} --tag sklimaszewski/${arg_image}:${arg_version}-${param_variant}-slim --squash --platform "linux/arm64,linux/amd64" --push ${arg_image}/${param_variant}/slim
+    machine_arch=$(uname -m)
+
+    if [[ "$machine_arch" == "aarch64" || "$machine_arch" == "arm64" ]]; then
+        architecture="linux/arm64"
+        tag="${tag}-arm64"
     else
-        docker buildx build --build-arg VERSION=${arg_version} --tag sklimaszewski/${arg_image}:${arg_version}-${param_variant} --squash --platform "linux/arm64,linux/amd64" --push ${arg_image}/${param_variant}
+        architecture="linux/amd64"
+        tag="${tag}-amd64"
+    fi
+fi
+
+if [ "$param_multiarch" = true ] && [ "$param_merge" = true ]; then
+    echo "Merging ${tag} multi-architecture image ..."
+    docker manifest create ${tag} --amend ${tag}-arm64 --amend ${tag}-amd64
+else
+    echo "Building and pushing image ${tag} in ./${build_path} ..."
+    if [ "$param_multiarch" = true ]; then
+        docker buildx build --build-arg VERSION=${arg_version} --tag ${tag} --squash --platform ${platform} --push ${build_path}
+    else
+        docker build --build-arg VERSION=${arg_version} --tag ${tag} --squash --push ${build_path}
     fi
 fi
