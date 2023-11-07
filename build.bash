@@ -70,6 +70,10 @@ tag="sklimaszewski/${arg_image}:${arg_version}"
 platform="linux/arm64,linux/amd64"
 build_path=${arg_image}
 
+if [ -d "${build_path}/${arg_version}" ]; then
+    build_path="${build_path}/${arg_version}"
+fi
+
 if [ -n "$param_variant" ]; then
     tag="${tag}-${param_variant}"
     build_path="${build_path}/${param_variant}"
