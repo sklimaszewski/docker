@@ -97,6 +97,7 @@ fi
 if [ "$param_multiarch" = true ] && [ "$param_merge" = true ]; then
     echo "Merging ${tag} multi-architecture image ..."
     docker manifest create ${tag} --amend ${tag}-arm64 --amend ${tag}-amd64
+    docker manifest push ${tag}
 else
     echo "Building and pushing image ${tag} in ./${build_path} ..."
     if [ "$param_multiarch" = true ]; then
