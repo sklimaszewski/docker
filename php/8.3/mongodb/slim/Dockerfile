@@ -13,7 +13,7 @@ RUN apk update && \
     apk add --no-cache --virtual dev-deps autoconf gcc g++ make && \
     apk add --no-cache git rsync bash bash-completion nano curl unzip openssl-dev shadow \
         libzip-dev libxslt-dev icu-dev freetype-dev libxpm-dev libgomp \
-        libpng-dev libjpeg-turbo-dev libwebp-dev libwebp-tools \
+        libpng-dev libjpeg-turbo-dev libwebp-dev libwebp-tools && \
     echo "no" | pecl install redis
 
 # MongoDB dependencies
